@@ -49,7 +49,6 @@ var
   ifDefaultDoctor:boolean;
   ifDefaultDepartment:boolean;
   ShowSelfDJ:boolean;//仅显示登录者所开申请单
-  bRegister:boolean;
   SCSYDW:STRING;//授权使用单位
   LisConn:string;//Lis连接字符串,MakeDBConn过程中被赋值,然后传入QC.DLL、CalcItemPro.dll
   OrderType:string;//基本信息排序方式
@@ -102,7 +101,6 @@ procedure VisibleColumn(dbgrid:tdbgrid;const DisplayName:string;const ifVisible:
 function ifhaspower(sender: tobject;const powerstr_js:string): boolean;
 function GetMaxId(const combin_id:string;CurDate:tdate;Diagnosetype:string): string;//取得最大流水号,参数:组别名及日期
 function HasSubInDbf(Node:TTreeNode):Boolean;
-function ifRegister:boolean;
 Procedure ChangeYouFormAllControlIme(YFormName:TWinControl);//需要更改输入法的窗体名称
 function SmoothLine(const strHistogram:string;const SmoothNum:byte;var Strings:TStrings):integer;
 function GetNextValue(CurValue: string): string;
@@ -683,6 +681,10 @@ begin
   newconnstr := newconnstr + 'data source=' + datasource + ';';
   newconnstr := newconnstr + 'Initial Catalog=' + initialcatalog + ';';
   newconnstr := newconnstr + 'provider=' + 'SQLOLEDB.1' + ';';
+  //Persist Security Info,表示ADO在数据库连接成功后是否保存密码信息
+  //ADO缺省为True,ADO.net缺省为False
+  //程序中会传ADOConnection信息给TADOLYQuery,故设置为True
+  newconnstr := newconnstr + 'Persist Security Info=True;';
   if ifIntegrated then
     newconnstr := newconnstr + 'Integrated Security=SSPI;';
   try

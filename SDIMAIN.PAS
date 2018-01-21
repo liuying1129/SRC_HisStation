@@ -50,7 +50,6 @@ type
     Action6: TAction;
     Action7: TAction;
     Action10: TAction;
-    N12: TMenuItem;
     N44: TMenuItem;
     N46: TMenuItem;
     O1: TMenuItem;
@@ -114,7 +113,6 @@ type
     DateTimePicker4: TDateTimePicker;
     Splitter1: TSplitter;
     StatusBar1: TStatusBar;
-    N37: TMenuItem;
     DosMove1: TDosMove;
     N24: TMenuItem;
     N25: TMenuItem;
@@ -219,7 +217,6 @@ type
     procedure ADObasicAfterOpen(DataSet: TDataSet);
     procedure N31Click(Sender: TObject);
     procedure Excel2Click(Sender: TObject);
-    procedure N37Click(Sender: TObject);
     procedure N25Click(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
     procedure LabeledEdit1KeyDown(Sender: TObject; var Key: Word;
@@ -330,8 +327,6 @@ end;
 
 procedure TSDIAppForm.FormShow(Sender: TObject);
 begin
-  if ifRegister then bRegister:=true else bRegister:=false;
-  
   frmLogin.ShowModal;
 
   ADO_dtl.Connection := DM.ADOConnection1;
@@ -466,7 +461,7 @@ procedure TSDIAppForm.UpdateADObasic;  //全部检验单事件
 var
   strsql22,strsql,strsql44,STRSQL45,STRSQL46,STRSQL47,STRSQL48,STRSQL49: string;
 begin
-  if bRegister then strsql22:='select ' else strsql22:='select top 2 ';//未注册版本只能显示前两条记录
+  strsql22:='select ';
   strsql:=' cch.unid as 唯一编号,cch.lsh as 样本号,cch.patientname as 姓名,cch.report_doctor as 审核者,'+
         ' cch.caseno as 病历号,cch.sex as 性别,'+
         ' cch.age as 年龄,cch.bedno as 床号,cch.deptname as 送检科室,'+
@@ -1871,17 +1866,6 @@ begin
   TempFile_T3:=configini.ReadString('打印模板','特殊模板3文件','');  
 
   configini.Free;
-end;
-
-procedure TSDIAppForm.N37Click(Sender: TObject);
-var
-  ss:string;
-begin
-  ss:='RegisterNum'+#2+'Edit'+#2+#2+'0'+#2+'将该窗体标题栏上的字符串发给开发者,以获取注册码'+#2;
-  if bRegister then exit;
-  //函数返回的Pchar类型还真能直接赋值给string!!!
-  if ShowOptionForm(Pchar('注册:'+GetHDSn('C:\')+'-'+GetHDSn('D:\')),'Register',Pchar(ss),Pchar(ChangeFileExt(Application.ExeName,'.ini')))then
-    if ifRegister then bRegister:=true else bRegister:=false;
 end;
 
 procedure TSDIAppForm.N25Click(Sender: TObject);

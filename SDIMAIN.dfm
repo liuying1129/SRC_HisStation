@@ -1604,9 +1604,6 @@ object SDIAppForm: TSDIAppForm
         Caption = #36873#39033
         OnClick = O1Click
       end
-      object N12: TMenuItem
-        Caption = '-'
-      end
     end
     object N65: TMenuItem
       Caption = #24037#20855
@@ -1614,10 +1611,6 @@ object SDIAppForm: TSDIAppForm
     object Help1: TMenuItem
       Caption = #24110#21161
       Hint = 'Help topics'
-      object N37: TMenuItem
-        Caption = #27880#20876
-        OnClick = N37Click
-      end
       object HelpAboutItem: TMenuItem
         Caption = #20851#20110'...'
         Hint = 
