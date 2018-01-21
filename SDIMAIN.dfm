@@ -3,7 +3,7 @@ object SDIAppForm: TSDIAppForm
   Top = 104
   Width = 800
   Height = 594
-  Caption = #35465#20975#26816#39564#20449#24687#31649#29702#31995#32479'V7.0--'#39044#32422#30331#35760
+  Caption = #26816#39564#39044#32422#24179#21488
   Color = clBtnFace
   Constraints.MinWidth = 130
   Font.Charset = GB2312_CHARSET
@@ -24,7 +24,7 @@ object SDIAppForm: TSDIAppForm
   object Splitter1: TSplitter
     Left = 477
     Top = 37
-    Height = 480
+    Height = 479
   end
   object CoolBar1: TCoolBar
     Left = 0
@@ -160,7 +160,7 @@ object SDIAppForm: TSDIAppForm
     Left = 480
     Top = 37
     Width = 304
-    Height = 480
+    Height = 479
     Align = alClient
     BevelOuter = bvNone
     ParentColor = True
@@ -218,14 +218,14 @@ object SDIAppForm: TSDIAppForm
       Left = 0
       Top = 23
       Width = 304
-      Height = 457
+      Height = 456
       Align = alClient
       TabOrder = 1
       object Panel3: TPanel
         Left = 1
         Top = 1
         Width = 302
-        Height = 455
+        Height = 454
         Align = alClient
         TabOrder = 0
         object Splitter2: TSplitter
@@ -266,7 +266,7 @@ object SDIAppForm: TSDIAppForm
           Left = 1
           Top = 107
           Width = 300
-          Height = 347
+          Height = 346
           Align = alClient
           Color = 16767438
           Ctl3D = False
@@ -289,14 +289,14 @@ object SDIAppForm: TSDIAppForm
     Left = 0
     Top = 37
     Width = 477
-    Height = 480
+    Height = 479
     Align = alLeft
     TabOrder = 2
     object GroupBox1: TGroupBox
       Left = 190
       Top = 1
       Width = 286
-      Height = 478
+      Height = 477
       Align = alClient
       Caption = #30003#35831#21333#21015#34920'(&Q)'
       Color = 16767438
@@ -306,7 +306,7 @@ object SDIAppForm: TSDIAppForm
         Left = 2
         Top = 85
         Width = 282
-        Height = 391
+        Height = 390
         Align = alClient
         Color = 16767438
         Ctl3D = False
@@ -393,7 +393,7 @@ object SDIAppForm: TSDIAppForm
       Left = 1
       Top = 1
       Width = 189
-      Height = 478
+      Height = 477
       Align = alLeft
       Caption = #22522#26412#20449#24687#24405#20837
       Color = 16767438
@@ -689,7 +689,7 @@ object SDIAppForm: TSDIAppForm
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 517
+    Top = 516
     Width = 784
     Height = 19
     Panels = <
@@ -1600,17 +1600,12 @@ object SDIAppForm: TSDIAppForm
     object Edit1: TMenuItem
       Caption = #31995#32479#35774#32622
       Hint = 'Edit commands'
-      OnClick = Edit1Click
       object O1: TMenuItem
         Caption = #36873#39033
         OnClick = O1Click
       end
       object N12: TMenuItem
         Caption = '-'
-      end
-      object N21: TMenuItem
-        Caption = #21551#29992#26679#26412#30340#32452#21512#39033#30446#26657#39564
-        OnClick = N21Click
       end
     end
     object N65: TMenuItem

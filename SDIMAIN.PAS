@@ -143,7 +143,6 @@ type
     N17: TMenuItem;
     N18: TMenuItem;
     N19: TMenuItem;
-    N21: TMenuItem;
     N14: TMenuItem;
     pmChangeGroup: TPopupMenu;
     N20: TMenuItem;
@@ -237,8 +236,6 @@ type
     procedure N16Click(Sender: TObject);
     procedure N18Click(Sender: TObject);
     procedure N19Click(Sender: TObject);
-    procedure N21Click(Sender: TObject);
-    procedure Edit1Click(Sender: TObject);
     procedure N14Click(Sender: TObject);
     procedure pmChangeGroupPopup(Sender: TObject);
   private
@@ -352,7 +349,7 @@ begin
 
   if DM.ADOConn_His.Connected then DM.ADOConn_His.Connected:=false;
 
-  if IdleTrackerInit then TimerIdleTracker.Enabled:=true else TimerIdleTracker.Enabled:=false;//要用到ReadConfig中的LoginTime参数
+  TimerIdleTracker.Enabled:=true;//TimerIdleTrackerTimer事件中需用到配置文件变量LoginTime
 
   LoadToolMenu(N65,'select name from CommCode where TypeName=''工具菜单'' order by ID');
 end;
@@ -715,8 +712,6 @@ end;
 procedure TSDIAppForm.FormDestroy(Sender: TObject);
 begin
   WriteProfile;
-
-  IdleTrackerTerm;
 end;
 
 procedure TSDIAppForm.frReport1GetValue(const ParName: String;
@@ -2006,7 +2001,7 @@ end;
 procedure TSDIAppForm.TimerIdleTrackerTimer(Sender: TObject);
 begin
 //自动弹出登录窗口
-  if(GetTickCount-IdleTrackerGetLastTickCount>LoginTime*1000)and(FindWindow(PCHAR('TfrmLogin'),PCHAR('登录'))=0) then
+  if (StopTime>LoginTime) and (FindWindow(PCHAR('TfrmLogin'),PCHAR('登录'))=0) then
     frmLogin.ShowModal;
 end;
 
@@ -2121,155 +2116,6 @@ begin
   if not ifhaspower(sender,powerstr_js_main) then exit;
 
   frmCommQuery.ShowModal;
-end;
-
-procedure TSDIAppForm.N21Click(Sender: TObject);
-//var
-//  adotemp11,adotemp22:tadoquery;
-//  RecNum_Con,RecNum:integer;
-begin
-{  if not ifhaspower(sender,powerstr_js_main) then exit;
-
-  if not (Sender as TMenuItem).Checked then
-  begin
-    adotemp11:=Tadoquery.Create(nil);
-    adotemp11.Connection:=dm.ADOConnection1;
-    adotemp11.Close;
-    adotemp11.SQL.Clear;
-    adotemp11.SQL.Text:=
-    'select count(*) as RecNum_Con from dbo.sysobjects where id = object_id(N''[dbo].[TRIGGER_Lsh_Verify_Con]'') and OBJECTPROPERTY(id, N''IsTrigger'') = 1';
-    adotemp11.Open;
-    RecNum_Con:=adotemp11.fieldbyname('RecNum_Con').AsInteger;
-    adotemp11.Free;
-    if RecNum_Con<=0 then
-    begin
-      adotemp11:=Tadoquery.Create(nil);
-      adotemp11.Connection:=dm.ADOConnection1;
-      adotemp11.Close;
-      adotemp11.SQL.Clear;
-      adotemp11.SQL.Text:=
-      ' CREATE TRIGGER TRIGGER_Lsh_Verify_Con ON chk_con_his '+
-      ' FOR UPDATE '+
-      ' AS '+
-      '  declare @unid int,@RecNum int,@flagetype varchar(60) '+
-      '  select @flagetype=flagetype,@unid=unid  from inserted '+
-      '  if (@unid is null) return '+
-      '  if isnull(@flagetype,'''')='''' return '+
-      '  select @RecNum=count(*) from chk_valu_his i,combinitem c where i.pkcombin_id=c.id and isnull(specimentype_DfValue,'''')<>isnull(@flagetype,'''') and i.pkunid=@unid '+
-      '  if @RecNum>0 '+
-      '  begin '+
-      '    raiserror (''已启用样本的组合项目校验,样本类型校验错误!'',16,1) '+
-      '    ROLLBACK TRANSACTION'+
-      '  end ';
-      adotemp11.ExecSQL;
-      adotemp11.Free;
-    end;
-
-    adotemp11:=Tadoquery.Create(nil);
-    adotemp11.Connection:=dm.ADOConnection1;
-    adotemp11.Close;
-    adotemp11.SQL.Clear;
-    adotemp11.SQL.Text:=
-    'select count(*) as RecNum from dbo.sysobjects where id = object_id(N''[dbo].[TRIGGER_Lsh_Verify]'') and OBJECTPROPERTY(id, N''IsTrigger'') = 1';
-    adotemp11.Open;
-    RecNum:=adotemp11.fieldbyname('RecNum').AsInteger;
-    adotemp11.Free;
-    if RecNum<=0 then
-    begin
-      adotemp11:=Tadoquery.Create(nil);
-      adotemp11.Connection:=dm.ADOConnection1;
-      adotemp11.Close;
-      adotemp11.SQL.Clear;
-      adotemp11.SQL.Text:=
-      'CREATE TRIGGER TRIGGER_Lsh_Verify ON chk_valu_his '+
-      'FOR INSERT, UPDATE '+
-      'AS '+
-      '  declare @pkunid int,@pkcombin_id varchar(10),@specimentype_DfValue varchar(60),@RecNum int,@itemtype varchar(50) '+
-      '  select @itemtype=itemtype,@specimentype_DfValue=specimentype_DfValue,@pkunid=pkunid  from inserted i,combinitem c where i.pkcombin_id=c.id '+
-      '  if (@pkunid is null) return '+
-      '  select @RecNum=count(*)  from chk_valu_his i,combinitem c where i.pkcombin_id=c.id and isnull(specimentype_DfValue,'''')<>isnull(@specimentype_DfValue,'''') and i.pkunid=@pkunid '+
-      '  if @RecNum>0 '+
-      '  begin '+
-      '    raiserror (''已启用样本的组合项目校验,样本类型校验错误!'',16,1) '+
-      '    ROLLBACK TRANSACTION '+
-      '  end '+
-      '  declare @RecNum2 int '+
-      '  select @RecNum2=count(*)  from chk_valu_his i,combinitem c where i.pkcombin_id=c.id and isnull(itemtype,'''')<>isnull(@itemtype,'''') and i.pkunid=@pkunid '+
-      '  if @RecNum2>0 '+
-      '  begin '+
-      '    raiserror (''已启用样本的组合项目校验,样本分隔符校验错误!'',16,1) '+
-      '    ROLLBACK TRANSACTION '+
-      '  end '+
-      '  declare @flagetype varchar(60) '+
-      '  select @flagetype=flagetype from chk_con_his cch where unid=@pkunid '+
-      '  if isnull(@flagetype,'''')='''' return '+
-      '  if isnull(@flagetype,'''')<>isnull(@specimentype_DfValue,'''') '+
-      '  begin '+
-      '    raiserror (''已启用样本的组合项目校验,样本类型校验错误!'',16,1) '+
-      '    ROLLBACK TRANSACTION '+
-      '  end ';
-      adotemp11.ExecSQL;
-      adotemp11.Free;
-    end;
-  end ELSE
-  begin
-    adotemp22:=Tadoquery.Create(nil);
-    adotemp22.Connection:=dm.ADOConnection1;
-    adotemp22.Close;
-    adotemp22.SQL.Clear;
-    adotemp22.SQL.Text:=
-    ' if exists (select * from dbo.sysobjects where id = object_id(N''[dbo].[TRIGGER_Lsh_Verify_Con]'') and OBJECTPROPERTY(id, N''IsTrigger'') = 1) '+
-    ' drop trigger [dbo].[TRIGGER_Lsh_Verify_Con]';
-    adotemp22.ExecSQL;
-    adotemp22.Free;
-
-    adotemp22:=Tadoquery.Create(nil);
-    adotemp22.Connection:=dm.ADOConnection1;
-    adotemp22.Close;
-    adotemp22.SQL.Clear;
-    adotemp22.SQL.Text:=
-    ' if exists (select * from dbo.sysobjects where id = object_id(N''[dbo].[TRIGGER_Lsh_Verify]'') and OBJECTPROPERTY(id, N''IsTrigger'') = 1) '+
-    ' drop trigger [dbo].[TRIGGER_Lsh_Verify]';
-    adotemp22.ExecSQL;
-    adotemp22.Free;
-  end;//}
-end;
-
-procedure TSDIAppForm.Edit1Click(Sender: TObject);
-var
-  adotemp11:tadoquery;
-  RecNum_Con,RecNum:integer;
-begin
-  RecNum_Con:=0;
-  RecNum:=0;
-  
-  adotemp11:=Tadoquery.Create(nil);
-  adotemp11.Connection:=dm.ADOConnection1;
-  adotemp11.Close;
-  adotemp11.SQL.Clear;
-  adotemp11.SQL.Text:=
-  'select count(*) as RecNum_Con from dbo.sysobjects where id = object_id(N''[dbo].[TRIGGER_Lsh_Verify_Con]'') and OBJECTPROPERTY(id, N''IsTrigger'') = 1';
-  try
-    adotemp11.Open;
-    RecNum_Con:=adotemp11.fieldbyname('RecNum_Con').AsInteger;
-  except
-  end;
-  adotemp11.Free;
-
-  adotemp11:=Tadoquery.Create(nil);
-  adotemp11.Connection:=dm.ADOConnection1;
-  adotemp11.Close;
-  adotemp11.SQL.Clear;
-  adotemp11.SQL.Text:=
-  'select count(*) as RecNum from dbo.sysobjects where id = object_id(N''[dbo].[TRIGGER_Lsh_Verify]'') and OBJECTPROPERTY(id, N''IsTrigger'') = 1';
-  try
-    adotemp11.Open;
-    RecNum:=adotemp11.fieldbyname('RecNum').AsInteger;
-  except
-  end;
-  adotemp11.Free;
-
-  N21.Checked:=(RecNum_Con>0) and (RecNum>0);
 end;
 
 procedure TSDIAppForm.N14Click(Sender: TObject);

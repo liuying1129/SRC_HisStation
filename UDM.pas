@@ -90,11 +90,7 @@ function GetVersionLY(const AFileName:pchar):pchar;stdcall;external 'LYFunction.
 function DeCryptStr(aStr: Pchar; aKey: Pchar): Pchar;stdcall;external 'DESCrypt.dll';//解密
 function EnCryptStr(aStr: Pchar; aKey: Pchar): Pchar;stdcall;external 'DESCrypt.dll';//加密
 function CalParserValue(const CalExpress:Pchar;var ReturnValue:single):boolean;stdcall;external 'CalParser.dll';
-function GetBm(InputStr:PChar;sel:integer):PChar;STDCALL;external 'autowbpy.dll';
 function ShowOptionForm(const pCaption,pTabSheetCaption,pItemInfo,pInifile:Pchar):boolean;stdcall;external 'OptionSetForm.dll';
-Function IdleTrackerInit:boolean;stdcall;external 'IdleTrac.dll';//start the monitoring process
-Procedure IdleTrackerTerm;stdcall;external 'IdleTrac.dll';//stop the monitoring process
-Function IdleTrackerGetLastTickCount:Longint;stdcall;external 'IdleTrac.dll';//get the tick count of last user input
 //****************************************************************************//
 
 procedure SendKeyToControl(const VK:byte;control:Twincontrol);
@@ -114,6 +110,7 @@ function GetFirstValue(CurValue: string): string;
 function MakeDBConn:boolean;
 procedure LoadGroupName(const comboBox:TcomboBox);
 procedure MakeDBGridColumnsAutoFixItsWidth(objDBGrid:TDBGrid);
+function StopTime: integer; //返回没有键盘和鼠标事件的时间
 
 implementation
 
@@ -772,6 +769,16 @@ begin
   begin
     objDbGrid.Columns[i].Width:=aDgCLength[i]*8;
   end;
+end;
+
+function StopTime: integer;
+//返回没有键盘和鼠标事件的时间
+var
+  LInput: TLastInputInfo;
+begin
+  LInput.cbSize := SizeOf(TLastInputInfo);
+  GetLastInputInfo(LInput);
+  Result := (GetTickCount() - LInput.dwTime) div 1000;//微秒换成秒
 end;
 
 end.
